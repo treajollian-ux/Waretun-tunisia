@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+    depends_on:
+      - server
+    networks:
+      - waretun-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+      - "51820:51820/udp"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/waretun
+      - CLIENT_URL=http://localhost:3000
+    depends_on:
+      - mongo
+    volumes:
+      - /etc/wireguard:/etc/wireguard
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - waretun-network
+
+  mongo:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - waretun-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - client
+      - server
+    networks:
+      - waretun-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  waretun-network:
+    driver: bridge
