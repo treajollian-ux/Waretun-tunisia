@@ -1,0 +1,24 @@
+{
+  "name": "waretun-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "setup": "bash scripts/setup-wireguard.sh"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "socket.io": "^4.6.0",
+    "mongoose": "^7.0.0",
+    "cors": "^2.8.5",
+    "helmet": "^6.0.0",
+    "express-rate-limit": "^6.7.0",
+    "dotenv": "^16.0.0",
+    "wireguard-tools": "^0.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.0"
+  }
+}
